@@ -1,0 +1,25 @@
+{
+  "angles": {
+    "instagram": "Community celebration",
+    "linkedin": "Team milestone story",
+    "x": "Quick product tip thread"
+  },
+  "posts": {
+    "instagram": "✨ Big week for the studio — 14-day trials are live and the team is buzzing! Short updates, real humans behind the product — what do you think?\n\n#BrandVoice #Community",
+    "linkedin": "We shipped our 14-day free trial this week. Team of 12, founded 2022 — still obsessed with making marketing less robotic.",
+    "x": "Marketing teams don't need more templates. They need voice that sounds like them. 14-day trial — no fluff."
+  },
+  "voice_scores": {
+    "instagram": 88,
+    "linkedin": 78,
+    "x": 74
+  },
+  "voice_rewrites": {
+    "instagram": {
+      "before": 71,
+      "after": 88,
+      "message": "Voice Checker rewrote this: 71 → 88"
+    }
+  },
+  "forced_unsupported": []
+}

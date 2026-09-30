@@ -1,0 +1,28 @@
+{
+  "angles": {
+    "instagram": "Emotional visual hook — morning light on the trail",
+    "linkedin": "Remote work productivity insight",
+    "x": "Contrarian: power banks vs solar"
+  },
+  "voice_dna": {
+    "avg_sentence_length": 11.5,
+    "emoji_rate": 1.2,
+    "hashtag_rate": 2.0,
+    "exclamation_rate": 2.5,
+    "question_rate": 3.0,
+    "cta_style": "soft"
+  },
+  "posts": {
+    "instagram": "Golden hour hits different when your laptop stays alive off-grid ☀️\n\nEcoFlow River 2 Pro — 512Wh, solar-ready, 7.8 lbs in the pack.\n\nWhere would you take yours?\n\n#CampLife #RemoteWork #EcoFlow #SolarPower",
+    "linkedin": "Remote work stopped being a desk problem — it's a power problem.\n\nWe tested portable solar for a week of field calls. The EcoFlow River 2 Pro (512Wh, charges via solar in ~3 hours, 7.8 lbs) kept workflows alive without hunting outlets.\n\nIf your team works off-site, treat power like Wi‑Fi: plan it before the meeting.\n\nWhat's your backup power setup?",
+    "x": "Hot take: another power bank isn't a strategy.\n\n512Wh + solar in ~3 hrs changes the math for campers & remote workers.\n\nEcoFlow River 2 Pro — $399, 7.8 lbs.\n\nStill tethered to wall sockets?"
+  },
+  "voice_scores": {
+    "instagram": 91,
+    "linkedin": 88,
+    "x": 86
+  },
+  "voice_rewrites": {},
+  "forced_unsupported": [],
+  "fact_guard": {}
+}

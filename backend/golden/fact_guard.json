@@ -1,0 +1,19 @@
+{
+  "angles": {
+    "instagram": "Time-saved benefit",
+    "linkedin": "ROI for marketing ops",
+    "x": "Myth-busting stat"
+  },
+  "posts": {
+    "instagram": "Save up to 2 hours every week on content prep ✨ Trusted by 500 teams who hate busywork.",
+    "linkedin": "Marketing ops leak time in rewriting the same brief three ways. Our users report saving up to 2 hours per week, with 500 teams onboard.",
+    "x": "Claim: 97% of teams love us AND we cure burnout in 48 hours.\n\nReal talk: up to 2 hours saved/week, 500 teams. The rest? Unsupported hype."
+  },
+  "voice_scores": {
+    "instagram": 86,
+    "linkedin": 89,
+    "x": 84
+  },
+  "voice_rewrites": {},
+  "forced_unsupported": ["97%", "48 hours", "cure burnout"]
+}

@@ -15,11 +15,20 @@ export async function fetchCompare() {
   return r.json()
 }
 
-export async function generate(brief) {
+export async function generate(brief, { goldenId } = {}) {
+  const payload = {
+    brand_product: brief.brand_product ?? '',
+    campaign_goal: brief.campaign_goal ?? '',
+    audience: brief.audience ?? '',
+    key_facts: brief.key_facts ?? '',
+    tone: brief.tone ?? '',
+  }
+  if (goldenId) payload.golden_id = goldenId
+
   const r = await fetch(`${BASE}/generate`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(brief),
+    body: JSON.stringify(payload),
   })
   if (!r.ok) throw new Error('Generate failed')
   return r.json()

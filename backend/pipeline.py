@@ -3,7 +3,7 @@ import json
 import re
 
 from fact_guard import check_facts
-from llm_router import chat_completion, is_demo_mode, load_golden, pick_golden_brief
+from llm_router import chat_completion, is_demo_mode, load_golden, resolve_golden_file
 from voice import analyze_voice_samples, rewrite_for_voice, voice_match_score
 
 DEFAULT_VOICE_SAMPLES = [
@@ -65,6 +65,42 @@ async def _generate_via_llm(brief: dict, voice_samples: list[str]) -> dict | Non
     return None
 
 
+def generate_deterministic_posts(brief: dict) -> tuple[dict[str, str], dict[str, str]]:
+    """DEMO_MODE fallback: template posts from the user's brief (not golden EcoFlow)."""
+    brand = (brief.get("brand_product") or "Your brand").strip()
+    goal = (brief.get("campaign_goal") or "your campaign goal").strip()
+    audience = (brief.get("audience") or "your audience").strip()
+    tone = (brief.get("tone") or "clear and authentic").strip()
+    facts = (brief.get("key_facts") or "Use only verified details from your brief.").strip()
+
+    posts = {
+        "instagram": (
+            f"Picture this: {audience} discovering what {brand} can do for {goal.lower()} ✨\n\n"
+            f"{facts}\n\n"
+            f"Tone check: {tone}. Ready to learn more?\n\n"
+            f"#{brand.replace(' ', '')} #Campaign"
+        ),
+        "linkedin": (
+            f"{goal} — that's the focus behind our latest push for {brand}.\n\n"
+            f"We're speaking directly to {audience}. "
+            f"Grounded details from our brief: {facts}\n\n"
+            f"Our voice stays {tone.lower()}. What would you prioritize in this campaign?"
+        ),
+        "x": (
+            f"Hot take: generic posts won't move {audience}.\n\n"
+            f"{brand} → {goal.lower()}.\n"
+            f"Facts we're standing on: {facts}\n\n"
+            f"({tone} — no fluff.)"
+        ),
+    }
+    angles = {
+        "instagram": "Emotional visual hook tied to audience",
+        "linkedin": "Professional insight for decision-makers",
+        "x": "Contrarian curiosity / sharp take",
+    }
+    return posts, angles
+
+
 def _apply_golden_overrides(golden: dict, brief: dict) -> dict:
     posts = dict(golden.get("posts", {}))
     voice = golden.get("voice_scores", {})
@@ -90,7 +126,11 @@ def _apply_golden_overrides(golden: dict, brief: dict) -> dict:
     }
 
 
-async def run_generate(brief: dict, voice_samples: list[str] | None = None) -> dict:
+async def run_generate(
+    brief: dict,
+    voice_samples: list[str] | None = None,
+    golden_id: str | None = None,
+) -> dict:
     samples = voice_samples or DEFAULT_VOICE_SAMPLES
     dna = analyze_voice_samples(samples)
 
@@ -104,6 +144,8 @@ async def run_generate(brief: dict, voice_samples: list[str] | None = None) -> d
     if not is_demo_mode():
         llm_posts = await _generate_via_llm(brief, samples)
 
+    golden_file = resolve_golden_file(golden_id)
+
     if llm_posts:
         posts = {k: str(v) for k, v in llm_posts.items() if k in ("instagram", "linkedin", "x")}
         angles = {
@@ -111,9 +153,8 @@ async def run_generate(brief: dict, voice_samples: list[str] | None = None) -> d
             "linkedin": "LLM: professional story",
             "x": "LLM: concise take",
         }
-    else:
-        golden_name = pick_golden_brief(brief)
-        golden = load_golden(golden_name)
+    elif golden_file:
+        golden = load_golden(golden_file)
         g = _apply_golden_overrides(golden, brief)
         posts = g["posts"]
         voice_scores = dict(g.get("voice_scores", {}))
@@ -121,6 +162,8 @@ async def run_generate(brief: dict, voice_samples: list[str] | None = None) -> d
         dna = g.get("voice_dna", dna)
         forced_unsupported = g.get("forced_unsupported", [])
         angles = g.get("angles", {})
+    else:
+        posts, angles = generate_deterministic_posts(brief)
 
     # Voice match + optional rewrite (max one rewrite pass per post)
     for platform in ("instagram", "linkedin", "x"):
@@ -147,7 +190,12 @@ async def run_generate(brief: dict, voice_samples: list[str] | None = None) -> d
         else:
             voice_scores[platform] = score
 
-    fact = check_facts(posts, brief.get("key_facts", ""), forced_unsupported)
+    fact = check_facts(
+        posts,
+        brief.get("key_facts", ""),
+        forced_unsupported,
+        full_brief=brief,
+    )
 
     return {
         "posts": posts,

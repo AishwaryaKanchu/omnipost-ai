@@ -31,6 +31,7 @@ class BriefIn(BaseModel):
     key_facts: str = ""
     tone: str = ""
     voice_samples: list[str] = Field(default_factory=list)
+    golden_id: str | None = None
 
 
 class LearnIn(BaseModel):
@@ -70,8 +71,8 @@ def learning_prefs():
 
 @app.post("/generate")
 async def generate(body: BriefIn):
-    brief = body.model_dump(exclude={"voice_samples"})
-    result = await run_generate(brief, body.voice_samples or None)
+    brief = body.model_dump(exclude={"voice_samples", "golden_id"})
+    result = await run_generate(brief, body.voice_samples or None, golden_id=body.golden_id)
     return result
 
 

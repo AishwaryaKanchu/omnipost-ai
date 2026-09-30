@@ -10,8 +10,8 @@ const emptyBrief = {
   tone: '',
 }
 
-export default function Studio({ initialBrief, result, setResult }) {
-  const [brief, setBrief] = useState(initialBrief ? { ...emptyBrief, ...initialBrief } : emptyBrief)
+export default function Studio({ result, setResult }) {
+  const [brief, setBrief] = useState(emptyBrief)
   const [loading, setLoading] = useState(false)
   const [editing, setEditing] = useState(null)
   const [editValue, setEditValue] = useState('')
@@ -92,9 +92,15 @@ export default function Studio({ initialBrief, result, setResult }) {
           </label>
         </div>
         <button type="button" onClick={runGenerate} disabled={loading} className="btn-primary mt-4">
-          {loading ? 'Generating…' : 'Generate 3 posts'}
+          {loading ? 'Generating…' : 'Generate 3 Posts'}
         </button>
       </section>
+
+      {!result?.posts && (
+        <div className="rounded-xl border border-dashed border-slate-300 bg-white px-6 py-12 text-center text-slate-500">
+          Enter your campaign brief and generate platform-native posts.
+        </div>
+      )}
 
       {result?.posts && (
         <div className="grid gap-6 lg:grid-cols-3">

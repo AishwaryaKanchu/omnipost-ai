@@ -9,3 +9,4 @@ dist/
 backend/data/cache/
 *.log
 .DS_Store
+backend/data/learning_prefs.json

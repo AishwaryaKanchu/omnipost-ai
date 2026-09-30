@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { generate, health } from './api'
+import { health } from './api'
 import Studio from './pages/Studio'
 import VoiceDna from './pages/VoiceDna'
 import Compare from './pages/Compare'
@@ -15,29 +15,14 @@ const TABS = [
 export default function App() {
   const [tab, setTab] = useState('studio')
   const [provider, setProvider] = useState('…')
-  const [result, setResult] = useState(null)
-  const [briefSeed, setBriefSeed] = useState(null)
+  const [studioResult, setStudioResult] = useState(null)
+  const [demoResult, setDemoResult] = useState(null)
 
   useEffect(() => {
     health().then((h) => setProvider(h.provider || (h.demo_mode ? 'DEMO MODE' : 'Live')))
   }, [])
 
-  const loadBrief = (b) => {
-    setBriefSeed({ ...b })
-    setTab('studio')
-  }
-
-  const quickGenerate = async (b) => {
-    const brief = {
-      brand_product: b.brand_product,
-      campaign_goal: b.campaign_goal,
-      audience: b.audience,
-      key_facts: b.key_facts,
-      tone: b.tone,
-    }
-    const data = await generate(brief)
-    setResult(data)
-  }
+  const voiceResult = studioResult ?? demoResult
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -67,12 +52,10 @@ export default function App() {
       </header>
 
       <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8">
-        {tab === 'studio' && (
-          <Studio key={briefSeed?.id || 'default'} initialBrief={briefSeed} result={result} setResult={setResult} />
-        )}
-        {tab === 'voice' && <VoiceDna result={result} />}
+        {tab === 'studio' && <Studio result={studioResult} setResult={setStudioResult} />}
+        {tab === 'voice' && <VoiceDna result={voiceResult} />}
         {tab === 'compare' && <Compare />}
-        {tab === 'demo' && <Demo onLoadBrief={loadBrief} onQuickGenerate={quickGenerate} />}
+        {tab === 'demo' && <Demo result={demoResult} setResult={setDemoResult} />}
       </main>
 
       <footer className="border-t border-slate-200 bg-white py-3 text-center text-xs text-slate-500">
@@ -82,7 +65,6 @@ export default function App() {
           <span>{provider}</span>
         )}
       </footer>
-
     </div>
   )
 }

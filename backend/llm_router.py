@@ -39,17 +39,18 @@ def load_golden(name: str) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
-def pick_golden_brief(brief: dict) -> str:
-    """Select golden file based on brief hints for demo scenarios."""
-    facts = (brief.get("key_facts") or "").lower()
-    brand = (brief.get("brand_product") or "").lower()
-    if "voice demo" in brand or "voice demo" in facts:
-        return "voice_rewrite"
-    if "fact guard demo" in brand or "unsupported" in facts:
-        return "fact_guard"
-    if "eco" in brand or "solar" in facts:
-        return "eco_brief"
-    return "default"
+GOLDEN_ID_MAP = {
+    "eco": "eco_brief",
+    "voice_demo": "voice_rewrite",
+    "fact_guard": "fact_guard",
+}
+
+
+def resolve_golden_file(golden_id: str | None) -> str | None:
+    """Demo tab only: map sample brief id to golden JSON filename stem."""
+    if not golden_id:
+        return None
+    return GOLDEN_ID_MAP.get(golden_id)
 
 
 async def chat_completion(messages: list[dict], max_tokens: int = 1200) -> str | None:

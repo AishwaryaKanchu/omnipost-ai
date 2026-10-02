@@ -1,67 +1,176 @@
+
+
 # OmniPost AI
 
-Hackathon MVP: **one brief → three platform-native posts (Instagram, LinkedIn, X) → Voice Match → Fact Guard → edit → approve.**
+## Project Overview
 
-No database, no auth, no auto-publishing. Works **without API keys** when `DEMO_MODE=1`.
+OmniPost AI is a hackathon-ready social media campaign assistant that takes one campaign brief and turns it into platform-specific post ideas for Instagram, LinkedIn, and X. It helps marketing teams generate content, improve brand voice consistency, detect unsupported claims, and refine copy before approval.
 
-## Quick start
+ It can generate three different post angles from a single brief, check how well each post matches a target voice, flag risky or unsupported claims, and allow users to edit the final content before approving it.
 
-### Backend (Python 3.11)
+## Technologies Used
 
-```bash
-cd backend
-python -m venv .venv
-.venv\Scripts\activate   # Windows
-pip install -r ../requirements.txt
-copy ..\.env.example ..\.env
-uvicorn main:app --reload --port 8000
-```
+### Backend
+- Python 3.11
+- FastAPI
+- Pydantic
+- Uvicorn
+- python-dotenv
 
 ### Frontend
+- React
+- Vite
+- Tailwind CSS
+
+### AI / Content Pipeline
+- OpenAI-compatible LLM integration (optional)
+- Demo/golden fallback mode for no-API-key usage
+- Built-in voice analysis and fact-checking logic
+
+## Repository Structure
+
+```bash
+omnipost-ai/
+├── backend/
+│   ├── baseline.py
+│   ├── fact_guard.py
+│   ├── golden/
+│   ├── learning.py
+│   ├── llm_router.py
+│   ├── main.py
+│   ├── music.py
+│   ├── pipeline.py
+│   ├── test_music.py
+│   ├── test_pipeline.py
+│   └── voice.py
+├── frontend/
+│   ├── src/
+│   ├── package.json
+│   ├── vite.config.js
+│   ├── tailwind.config.js
+│   └── postcss.config.js
+├── .env.example
+├── requirements.txt
+├── vercel.json
+├── README.md
+├── .gitignore
+└── .python-version
+```
+
+## Setup & Installation
+
+### 1. Clone the repository
+
+```bash
+git clone <your-repository-url>
+cd omnipost-ai
+```
+
+### 2. Create a Python virtual environment
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
+For Windows:
+
+```bash
+.venv\Scripts\activate
+```
+
+### 3. Install Python dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### 4. Copy environment variables
+
+```bash
+cp .env.example .env
+```
+
+### 5. Install frontend dependencies
 
 ```bash
 cd frontend
 npm install
+```
+
+## Environment Variables
+
+The project uses a sample environment file:
+
+```env
+DEMO_MODE=1
+LLM_API_KEY=
+LLM_BASE_URL=https://api.openai.com/v1
+LLM_MODEL=gpt-4o-mini
+```
+
+### Notes
+- `DEMO_MODE=1` allows the app to work without external API keys.
+- If you want live AI generation, set `DEMO_MODE=0` and provide valid API values.
+
+## How to Run the Project
+
+### Start the backend
+
+From the project root:
+
+```bash
+cd backend
+uvicorn main:app --reload --host 127.0.0.1 --port 8000
+```
+
+### Start the frontend
+
+Open a second terminal and run:
+
+```bash
+cd frontend
 npm run dev
 ```
 
-Open [http://localhost:5173](http://localhost:5173). API calls proxy to `http://127.0.0.1:8000`.
+Then visit:
 
-## Demo flow (2 minutes)
+```text
+http://localhost:5173
+```
 
-1. Open **Demo** tab → **Voice Match Demo** → Run demo → see `Voice Checker rewrote this: 71 → 88` on Instagram.
-2. **Fact Guard Demo** → unsupported claims flagged on X.
-3. **Studio** → edit a post → **Learned from your edit ✓** → **Approve** / **Copy**.
+The frontend is configured to call the backend at:
 
-Footer shows **DEMO MODE** or your LLM provider when configured.
+```text
+http://127.0.0.1:8000
+```
 
-## Environment
+## Features
 
-| Variable | Description |
-|----------|-------------|
-| `DEMO_MODE=1` | Golden responses only, no external AI |
-| `LLM_API_KEY` | OpenAI-compatible API key |
-| `LLM_BASE_URL` | Default `https://api.openai.com/v1` |
-| `LLM_MODEL` | Default `gpt-4o-mini` |
+- Studio mode for generating posts from a campaign brief
+- Voice DNA analysis to compare brand tone
+- Fact Guard checks for unsupported claims
+- Demo tab with built-in examples
+- Compare page for benchmark-style review
+- Edit + approval workflow for final copy
 
-If the LLM call fails, the app falls back to golden/demo responses.
+## API Highlights
 
-## API
-
-- `GET /health`
-- `POST /generate` — brief JSON → posts, voice scores, fact guard
-- `POST /learn` — record edit preferences
-- `POST /approve` — mark approved (copy-only)
+- `GET /health` — app health and demo status
+- `POST /generate` — generate platform-specific social posts
+- `POST /learn` — save user editing preferences
+- `POST /approve` — approve final post content
 - `GET /samples` — demo briefs
-- `GET /compare` — baseline vs OmniPost (labeled demo data)
+- `GET /compare` — compare baseline and generated output
 
-## Project layout
+## Demo Flow
 
-```
-backend/          FastAPI, pipeline, voice, fact guard, golden/
-frontend/         React + Vite + Tailwind
-```
+1. Open the Demo section.
+2. Select a sample brief.
+3. Generate outputs for Instagram, LinkedIn, and X.
+4. Review voice-match suggestions.
+5. Check fact-guard warnings.
+6. Refine content in the Studio view.
+7. Approve the final version.
 
-## License
 
-MIT — hackathon project.

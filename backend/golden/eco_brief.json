@@ -15,5 +15,10 @@
     "x": 85
   },
   "voice_rewrites": {},
-  "forced_unsupported": []
+  "forced_unsupported": [],
+  "suggested_audio": {
+    "title": "Sunlight & Pines",
+    "artist": "Wilderness Collective",
+    "reason": "Acoustic, outdoorsy vibe matching the solar trail story."
+  }
 }

@@ -113,6 +113,7 @@ export default function Studio({ result, setResult }) {
               voiceScore={result.voice_scores?.[p]}
               voiceRewrite={result.voice_rewrites?.[p]}
               factGuard={result.fact_guard}
+              suggestedAudio={result?.suggested_audio}
               approved={approved[p]}
               editing={editing === p}
               editValue={editValue}

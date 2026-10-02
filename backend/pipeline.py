@@ -2,9 +2,9 @@
 import json
 import re
 
-from fact_guard import check_facts
-from llm_router import chat_completion, is_demo_mode, load_golden, resolve_golden_file
-from voice import analyze_voice_samples, rewrite_for_voice, voice_match_score
+from backend.fact_guard import check_facts
+from backend.llm_router import chat_completion, is_demo_mode, load_golden, resolve_golden_file
+from backend.voice import analyze_voice_samples, rewrite_for_voice, voice_match_score
 
 DEFAULT_VOICE_SAMPLES = [
     "We keep it real — short sentences, warm tone. Questions welcome!",
@@ -101,6 +101,38 @@ def generate_deterministic_posts(brief: dict) -> tuple[dict[str, str], dict[str,
     return posts, angles
 
 
+def get_suggested_audio(brief: dict, post_text: str = "") -> dict:
+    text = (
+        f"{brief.get('brand_product', '')} {brief.get('campaign_goal', '')} "
+        f"{brief.get('audience', '')} {brief.get('tone', '')} {post_text}"
+    ).lower()
+
+    if any(k in text for k in ("eco", "solar", "outdoor", "camp", "nature", "trail", "river", "pack")):
+        return {
+            "title": "Sunlight & Pines",
+            "artist": "Wilderness Collective",
+            "reason": "Acoustic, outdoorsy vibe matching the solar trail story.",
+        }
+    elif any(k in text for k in ("voice", "studio", "rewrite", "software", "demo", "trial", "marketing", "robotic")):
+        return {
+            "title": "Lo-Fi Workspace",
+            "artist": "Chill Beats Co.",
+            "reason": "Relaxed conversational beat for studio and software updates.",
+        }
+    elif any(k in text for k in ("fact", "guard", "claim", "compliance", "data", "precise", "proof", "busywork")):
+        return {
+            "title": "Precision",
+            "artist": "Minimal Tech",
+            "reason": "Clean, subtle background audio for compliance and precision topics.",
+        }
+    else:
+        return {
+            "title": "Ambient Waves",
+            "artist": "Modern Canvas",
+            "reason": "Subtle background audio to complement your Instagram reel.",
+        }
+
+
 def _apply_golden_overrides(golden: dict, brief: dict) -> dict:
     posts = dict(golden.get("posts", {}))
     voice = golden.get("voice_scores", {})
@@ -115,6 +147,7 @@ def _apply_golden_overrides(golden: dict, brief: dict) -> dict:
         "voice_rewrites": rewrites,
         "fact_guard": fact,
         "forced_unsupported": forced,
+        "suggested_audio": golden.get("suggested_audio") or get_suggested_audio(brief, posts.get("instagram", "")),
         "angles": golden.get(
             "angles",
             {
@@ -139,6 +172,7 @@ async def run_generate(
     voice_scores: dict[str, int] = {}
     forced_unsupported: list[str] = []
     angles: dict[str, str] = {}
+    suggested_audio: dict | None = None
 
     llm_posts = None
     if not is_demo_mode():
@@ -153,6 +187,10 @@ async def run_generate(
             "linkedin": "LLM: professional story",
             "x": "LLM: concise take",
         }
+        if isinstance(llm_posts.get("suggested_audio"), dict) and "title" in llm_posts["suggested_audio"]:
+            suggested_audio = llm_posts["suggested_audio"]
+        else:
+            suggested_audio = get_suggested_audio(brief, posts.get("instagram", ""))
     elif golden_file:
         golden = load_golden(golden_file)
         g = _apply_golden_overrides(golden, brief)
@@ -162,8 +200,10 @@ async def run_generate(
         dna = g.get("voice_dna", dna)
         forced_unsupported = g.get("forced_unsupported", [])
         angles = g.get("angles", {})
+        suggested_audio = g.get("suggested_audio") or get_suggested_audio(brief, posts.get("instagram", ""))
     else:
         posts, angles = generate_deterministic_posts(brief)
+        suggested_audio = get_suggested_audio(brief, posts.get("instagram", ""))
 
     # Voice match + optional rewrite (max one rewrite pass per post)
     for platform in ("instagram", "linkedin", "x"):
@@ -204,6 +244,7 @@ async def run_generate(
         "voice_rewrites": voice_rewrites,
         "fact_guard": fact,
         "angles": angles,
+        "suggested_audio": suggested_audio,
         "demo_mode": is_demo_mode(),
         "voice_samples": samples,
     }

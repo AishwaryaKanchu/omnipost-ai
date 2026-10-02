@@ -8,10 +8,10 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
-from baseline import COMPARE_DATA
-from learning import get_preferences, record_edit
-from llm_router import is_demo_mode, provider_label
-from pipeline import get_sample_briefs, run_generate
+from backend.baseline import COMPARE_DATA
+from backend.learning import get_preferences, record_edit
+from backend.llm_router import is_demo_mode, provider_label
+from backend.pipeline import get_sample_briefs, run_generate
 
 app = FastAPI(title="OmniPost AI", version="0.1.0")
 

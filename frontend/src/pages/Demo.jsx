@@ -57,6 +57,7 @@ export default function Demo({ result, setResult }) {
               voiceScore={result.voice_scores?.[p]}
               voiceRewrite={result.voice_rewrites?.[p]}
               factGuard={result.fact_guard}
+              suggestedAudio={result?.suggested_audio}
               approved={false}
               editing={false}
               onEdit={() => {}}

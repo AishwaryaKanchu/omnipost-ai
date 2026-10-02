@@ -11,6 +11,7 @@ export default function PlatformCard({
   voiceScore,
   voiceRewrite,
   factGuard,
+  suggestedAudio,
   approved,
   onEdit,
   onCopy,
@@ -48,6 +49,18 @@ export default function PlatformCard({
           />
         ) : (
           <div className="whitespace-pre-wrap rounded-lg bg-slate-50 p-3 text-sm leading-relaxed">{content}</div>
+        )}
+
+        {platform === 'instagram' && suggestedAudio && (
+          <div className="rounded-lg border border-purple-100 bg-purple-50 p-3 text-xs">
+            <div className="font-semibold text-purple-900">🎵 Suggested Audio</div>
+            <div className="mt-1 font-medium text-slate-800">
+              {suggestedAudio.title} — {suggestedAudio.artist}
+            </div>
+            {suggestedAudio.reason && (
+              <div className="mt-0.5 text-slate-600">{suggestedAudio.reason}</div>
+            )}
+          </div>
         )}
 
         <div className="flex flex-wrap gap-2 text-xs">

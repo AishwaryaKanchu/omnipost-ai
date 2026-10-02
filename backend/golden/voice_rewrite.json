@@ -21,5 +21,10 @@
       "message": "Voice Checker rewrote this: 71 → 88"
     }
   },
-  "forced_unsupported": []
+  "forced_unsupported": [],
+  "suggested_audio": {
+    "title": "Lo-Fi Workspace",
+    "artist": "Chill Beats Co.",
+    "reason": "Relaxed conversational beat for studio and software updates."
+  }
 }

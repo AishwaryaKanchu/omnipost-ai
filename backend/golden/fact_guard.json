@@ -15,5 +15,10 @@
     "x": 84
   },
   "voice_rewrites": {},
-  "forced_unsupported": ["97%", "48 hours", "cure burnout"]
+  "forced_unsupported": ["97%", "48 hours", "cure burnout"],
+  "suggested_audio": {
+    "title": "Precision",
+    "artist": "Minimal Tech",
+    "reason": "Clean, subtle background audio for compliance and precision topics."
+  }
 }

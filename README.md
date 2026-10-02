@@ -172,5 +172,6 @@ http://127.0.0.1:8000
 5. Check fact-guard warnings.
 6. Refine content in the Studio view.
 7. Approve the final version.
+8. you can also write your own brief and it shows the output 
 
 
